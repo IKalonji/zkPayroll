@@ -1,9 +1,16 @@
 // This file can be replaced during build by using the `fileReplacements` array.
-// `ng build` replaces `environment.ts` with `environment.prod.ts`.
+// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: "http://localhost:4200",
+  hederaAccountID: "",
+  hederaPrivateKey: "",
+  contract: "",
+  circleUSDC: "",
+  CIRCLE_ENDPOINT: "https://api-sandbox.circle.com",
+  ipfs: 'https://ipfs.infura.io'
 };
 
 /*

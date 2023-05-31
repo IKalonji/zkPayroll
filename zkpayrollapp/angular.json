@@ -3,25 +3,25 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "zkpayrollapp": {
+    "liddX": {
+      "root": "",
+      "sourceRoot": "src",
       "projectType": "application",
+      "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
           "style": "sass"
         }
       },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/zkpayrollapp",
+            "outputPath": "dist/main",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "src/tsconfig.app.json",
             "allowedCommonJsDependencies": [
               "svg-gauge",
               "echarts",
@@ -73,16 +73,19 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "liddX:build"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "zkpayrollapp:build:production"
+              "browserTarget": "liddX:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "zkpayrollapp:build"
+            "browserTarget": "liddX:build"
           }
         },
         "test": {
@@ -102,7 +105,7 @@
         }
       }
     },
-    "zkpayrollapp-e2e": {
+    "liddX-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -111,18 +114,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "zkpayrollapp:serve"
+            "devServerTarget": "liddX:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "zkpayrollapp:serve:production"
+              "devServerTarget": "liddX:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "zkpayrollapp",
+  "defaultProject": "liddX",
   "cli": {
     "analytics": false
   }
