@@ -10,9 +10,9 @@
           <h2 class="welcome-msg"> Welcome to liddX </h2>
           <h2 class="login-title">Sign in</h2>
           <div class="d-flex justify-content-between lbl-alert mb-3">
-            <mat-radio-group aria-label="Select an option" class="mt-2">
-              <mat-radio-button color="primary" checked="true" value="1">Admin</mat-radio-button>
-              <mat-radio-button color="accent" value="2">Employee</mat-radio-button>
+            <mat-radio-group aria-label="Select an option" class="mt-2" [(ngModel)]="roleChanged">
+              <mat-radio-button color="primary" (change)="setRole($event)" checked="true" [value]="1">Admin</mat-radio-button>
+              <mat-radio-button color="accent" (change)="setRole($event)" [value]="2">Employee</mat-radio-button>
             </mat-radio-group>
             <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
               <button mat-raised-button color="primary" [class.auth-spinner]="loading" [disabled]="loading" [disabled]="!authForm.valid " type="submit">Connect</button>

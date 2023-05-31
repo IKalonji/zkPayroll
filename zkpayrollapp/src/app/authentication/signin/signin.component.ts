@@ -48,8 +48,15 @@ export class SigninComponent
     this.authForm.get("username").setValue("client@software.com");
     this.authForm.get("password").setValue("client@123");
   }
+  roleChanged: any;
+  setRole(e) {
+    if(e.value == "1") {
+      this.adminSet();
+    } else if (e.value == "2") {
+      this.employeeSet();
+    }
+  }
   onSubmit() {
-    this.employeeSet();
     this.submitted = true;
     this.loading = true;
     this.error = "";
@@ -63,7 +70,7 @@ export class SigninComponent
           (res) => {
             if (res) {
               setTimeout(() => {
-                const role = Role.Employee ?? Role.Admin;
+                const role = this.authService.currentUserValue.role;
                 if (role === Role.Admin) {
                   this.router.navigate(["/admin/dashboard/main"]);
                 } else if (role === Role.Employee) {
