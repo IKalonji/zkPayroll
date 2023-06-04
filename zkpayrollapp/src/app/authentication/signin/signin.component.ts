@@ -48,7 +48,7 @@ export class SigninComponent
     this.authForm.get("username").setValue("client@software.com");
     this.authForm.get("password").setValue("client@123");
   }
-  roleChanged: any;
+  roleChanged: any = 1;
   setRole(e) {
     if(e.value == "1") {
       this.adminSet();
