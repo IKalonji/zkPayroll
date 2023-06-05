@@ -24,13 +24,10 @@ export class AllclientComponent
 {
   displayedColumns = [
     "select",
-    "img",
     "name",
     "mobile",
     "email",
     "company_name",
-    "currency",
-    "billing_method",
     "actions",
   ];
   exampleDatabase: ClientsService | null;
@@ -39,6 +36,7 @@ export class AllclientComponent
   index: number;
   id: number;
   clients: Clients | null;
+  isExporterEnabled: boolean = false;
   constructor(
     public httpClient: HttpClient,
     public dialog: MatDialog,

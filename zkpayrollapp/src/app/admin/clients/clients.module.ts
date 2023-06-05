@@ -16,7 +16,6 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { AddClientComponent } from "./add-client/add-client.component";
-import { EditClientComponent } from "./edit-client/edit-client.component";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTableExporterModule } from "mat-table-exporter";
@@ -34,7 +33,6 @@ import { SharedModule } from "src/app/shared/shared.module";
     FormDialogComponent,
     DeleteDialogComponent,
     AddClientComponent,
-    EditClientComponent,
   ],
   imports: [
     CommonModule,

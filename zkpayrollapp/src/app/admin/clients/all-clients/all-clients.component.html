@@ -15,9 +15,6 @@
                   <div class="col-8">
                     <ul class="header-buttons-left ms-0">
                       <li class="dropdown">
-                        <h2>Client</h2>
-                      </li>
-                      <li class="dropdown m-l-20">
                         <label for="search-input"><i class="material-icons search-icon">search</i></label>
                         <input placeholder="Search" type="text" #filter class="browser-default search-field"
                           aria-label="Search box">
@@ -51,22 +48,25 @@
                       <li>
                         <div class="export-button m-l-10" matTooltip="XLSX">
                           <img src="assets/images/icons/xlsx.png" alt=""
-                            (click)="exporter.exportTable('xlsx', {fileName:'assets-list', sheet: 'sheet1'})" />
+                            (click)="isExporterEnabled ? exporter.exportTable('xlsx', {fileName:'assets-list', sheet: 'sheet1'}) : null" />
                         </div>
                       </li>
                       <li>
                         <div class="export-button m-l-10" matTooltip="CSV">
-                          <img src="assets/images/icons/csv.png" alt="" (click)="exporter.exportTable('csv')" />
+                          <img src="assets/images/icons/csv.png" alt="" 
+                            (click)="isExporterEnabled ? exporter.exportTable('csv') : null" />
                         </div>
                       </li>
                       <li>
                         <div class="export-button m-l-10" matTooltip="JSON">
-                          <img src="assets/images/icons/json.png" alt="" (click)="exporter.exportTable('json')" />
+                          <img src="assets/images/icons/json.png" alt="" 
+                            (click)="isExporterEnabled ? exporter.exportTable('json') : null" />
                         </div>
                       </li>
                       <li>
                         <div class="export-button m-l-10" matTooltip="TXT">
-                          <img src="assets/images/icons/txt.png" alt="" (click)="exporter.exportTable('txt')" />
+                          <img src="assets/images/icons/txt.png" alt="" 
+                            (click)="isExporterEnabled ? exporter.exportTable('txt') : null" />
                         </div>
                       </li>
                     </ul>
@@ -94,13 +94,6 @@
                   <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
                   <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="img">
-                  <mat-header-cell mat-header-cell *matHeaderCellDef [ngClass]="'tbl-col-width-per-5'"> Image
-                  </mat-header-cell>
-                  <mat-cell mat-cell *matCellDef="let row" class="table-img tbl-col-width-per-5"> <img
-                      [src]="row.img" />
-                  </mat-cell>
-                </ng-container>
                 <ng-container matColumnDef="name">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.name}}</mat-cell>
@@ -116,15 +109,6 @@
                 <ng-container matColumnDef="company_name">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>Company Name</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.company_name}}</mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="currency">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Currency</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.currency}}</mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="billing_method">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Billing Method</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.billing_method}}</mat-cell>
                 </ng-container>
                 <!-- actions -->
                 <ng-container matColumnDef="actions">
