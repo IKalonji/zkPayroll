@@ -12,6 +12,12 @@ export class EmployeeDto {
     walletAddress: string;
 }
 
+export enum ProjectStatus {
+    Completed,
+    InProgress,
+    Pending
+}
+
 export class ProjectDto {
     id: string;
     clientId: string;
@@ -20,6 +26,7 @@ export class ProjectDto {
     rate: number;
     startDate: Date;
     endDate: Date;
+    status: ProjectStatus;
 }
 
 export class AssignmentDto {
