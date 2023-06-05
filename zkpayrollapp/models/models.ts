@@ -21,8 +21,8 @@ export enum ProjectStatus {
 export class ProjectDto {
     id: string;
     clientId: string;
-    name: string;
-    details: string;
+    title: string;
+    description: string;
     rate: number;
     startDate: Date;
     endDate: Date;
@@ -48,7 +48,7 @@ export class TimesheetDto {
 export class InvoiceDto {
     id: string;
     employeeId: string;
-    details: string;
+    description: string;
     timesheetIds: string[];
     isPaid: boolean;
 }

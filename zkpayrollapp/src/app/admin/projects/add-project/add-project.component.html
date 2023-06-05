@@ -14,87 +14,43 @@
             <form class="m-4" [formGroup]="projectForm" (ngSubmit)="onSubmit()">
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Project Title</mat-label>
+                    <input matInput formControlName="title" placeholder="Project Title" required>
+                    <mat-error *ngIf="projectForm.get('title').hasError('required')">
+                      Project Title is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Project ID</mat-label>
-                    <input matInput formControlName="projectID" required>
-                    <mat-error *ngIf="projectForm.get('projectID').hasError('required')">
-                      Project ID is required
+                    <mat-label>Client</mat-label>
+                    <mat-select formControlName="client" required>
+                      <mat-option *ngFor="let client of clientList" [value]="client.id">{{client.name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="projectForm.get('client').hasError('required')">
+                      Client is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width mb-3" appearance="outline">
+                    <mat-label>Rate</mat-label>
+                    <input matInput formControlName="rate" type="number" required>
+                    <mat-error *ngIf="projectForm.get('rate').hasError('required')">
+                      Rate is required
                     </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
                   <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>Project Title</mat-label>
-                    <input matInput formControlName="projectTitle" placeholder="Project Title" required>
-                    <mat-error *ngIf="projectForm.get('projectTitle').hasError('required')">
-                      Project Title is required
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Department</mat-label>
-                    <mat-select formControlName="department" required>
-                      <mat-option [value]="'Designing'">
-                        Designing
-                      </mat-option>
-                      <mat-option [value]="'Development'">
-                        Development
-                      </mat-option>
-                      <mat-option [value]="'Testing'">
-                        Testing
-                      </mat-option>
-                      <mat-option [value]="'Marketing'">
-                        Marketing
-                      </mat-option>
-                      <mat-option [value]="'Accounts'">
-                        Accounts
+                    <mat-label>Team</mat-label>
+                    <mat-select formControlName="team" multiple required>
+                      <mat-option *ngFor="let team of teamList" [value]="team.id">{{team.name}}
                       </mat-option>
                     </mat-select>
-                    <mat-error *ngIf="projectForm.get('department').hasError('required')">
-                      Department is required
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Project Priority</mat-label>
-                    <mat-select formControlName="priority" required>
-                      <mat-option [value]="'Low'">
-                        Low
-                      </mat-option>
-                      <mat-option [value]="'Medium'">
-                        Medium
-                      </mat-option>
-                      <mat-option [value]="'High'">
-                        High
-                      </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="projectForm.get('priority').hasError('required')">
-                      Project Priority is required
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Client</mat-label>
-                    <input matInput formControlName="client" required>
-                    <mat-error *ngIf="projectForm.get('client').hasError('required')">
-                      Client name is required
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Price</mat-label>
-                    <input matInput formControlName="price" type="number" required>
-                    <mat-error *ngIf="projectForm.get('price').hasError('required')">
-                      Price is required
-                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>
@@ -123,26 +79,10 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
-                  <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>Team</mat-label>
-                    <mat-select formControlName="team" multiple required>
-                      <mat-option *ngFor="let team of teamList" [value]="team">{{team}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </div>
-              <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <mat-label>Work Status: </mat-label>
+                  <mat-label>Project Status: </mat-label>
                   <mat-radio-group formControlName="status">
-                    <mat-radio-button value="Active">Active</mat-radio-button>
-                    <mat-radio-button value="Completed">Completed</mat-radio-button>
-                    <mat-radio-button value="Running" [checked]="true">Running</mat-radio-button>
-                    <mat-radio-button value="Pending">Pending</mat-radio-button>
-                    <mat-radio-button value="NotStarted">Not Started</mat-radio-button>
-                    <mat-radio-button value="Cancled">Cancled</mat-radio-button>
+                    <mat-radio-button *ngFor="let status of statusList" [value]="status">{{status}}</mat-radio-button>
                   </mat-radio-group>
                 </div>
               </div>
@@ -150,12 +90,6 @@
                 <mat-label>Descriptions: </mat-label>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
                   <ckeditor [editor]="Editor" data="<p>Project details!</p>"></ckeditor>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
-                  <mat-label>Upload Image</mat-label>
-                  <app-file-upload formControlName="fileUpload"></app-file-upload>
                 </div>
               </div>
               <div class="row">
