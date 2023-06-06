@@ -1,7 +1,9 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { ClientDto, EmployeeDto } from "models/models";
+import { ClientDto, EmployeeDto, ProjectDto, ProjectStatus } from "models/models";
+import { v4 as uuid } from 'uuid';
+
 @Component({
   selector: "app-add-project",
   templateUrl: "./add-project.component.html",
@@ -37,24 +39,29 @@ export class AddprojectsComponent {
     }
   ];
 
-  statusList: string[] = [ 
-    "Completed", 
-    "In Progress", 
-    "Pending" 
+  statusList: any[] = [ 
+    { name: 'Completed', value: ProjectStatus.Completed },
+    { name: 'In Progress', value: ProjectStatus.InProgress },
+    { name: 'Pending', value: ProjectStatus.Pending }
   ];
 
   constructor(private fb: FormBuilder) {
+    const id = uuid();
     this.projectForm = this.fb.group({
-      title: ["", [Validators.required]],
+      id: [id, [Validators.required]],
+      titleId: ["", [Validators.required]],
       client: ["", [Validators.required]],
       rate: ["", [Validators.required]],
       startDate: ["", [Validators.required]],
       endDate: ["", [Validators.required]],
       team: ["", [Validators.required]],
-      status: ["", [Validators.required]]
+      status: ["", [Validators.required]],
+      description: ["", [Validators.required]]
     });
   }
   onSubmit() {
+    const project: ProjectDto = this.projectForm.value;
+    console.log(project);
     console.log("Form Value", this.projectForm.value);
   }
 }

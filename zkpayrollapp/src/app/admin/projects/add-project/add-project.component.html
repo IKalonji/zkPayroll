@@ -16,8 +16,8 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3">
                   <mat-form-field class="example-full-width" appearance="outline">
                     <mat-label>Project Title</mat-label>
-                    <input matInput formControlName="title" placeholder="Project Title" required>
-                    <mat-error *ngIf="projectForm.get('title').hasError('required')">
+                    <input matInput formControlName="titleId" placeholder="Project Title" required>
+                    <mat-error *ngIf="projectForm.get('titleId').hasError('required')">
                       Project Title is required
                     </mat-error>
                   </mat-form-field>
@@ -82,14 +82,20 @@
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
                   <mat-label>Project Status: </mat-label>
                   <mat-radio-group formControlName="status">
-                    <mat-radio-button *ngFor="let status of statusList" [value]="status">{{status}}</mat-radio-button>
+                    <mat-radio-button *ngFor="let status of statusList" [value]="status.value">{{status.name}}</mat-radio-button>
                   </mat-radio-group>
                 </div>
               </div>
               <div class="row">
-                <mat-label>Descriptions: </mat-label>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
-                  <ckeditor [editor]="Editor" data="<p>Project details!</p>"></ckeditor>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                  <mat-form-field class="example-full-width mb-3" appearance="outline">
+                    <mat-label>Description Of The Project</mat-label>
+                    <textarea matInput formControlName="description" class="description-area" required>
+                    </textarea>
+                    <mat-error *ngIf="projectForm.get('description').hasError('required')">
+                      Description is required
+                    </mat-error>
+                  </mat-form-field>
                 </div>
               </div>
               <div class="row">
