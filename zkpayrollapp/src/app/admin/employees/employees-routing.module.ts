@@ -2,8 +2,6 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { AddEmployeeComponent } from "./add-employee/add-employee.component";
 import { AllemployeesComponent } from "./allEmployees/allemployees.component";
-import { EditEmployeeComponent } from "./edit-employee/edit-employee.component";
-import { EmployeeProfileComponent } from "./employee-profile/employee-profile.component";
 const routes: Routes = [
   {
     path: "allEmployees",
@@ -12,14 +10,6 @@ const routes: Routes = [
   {
     path: "add-employee",
     component: AddEmployeeComponent,
-  },
-  {
-    path: "edit-employee",
-    component: EditEmployeeComponent,
-  },
-  {
-    path: "employee-profile",
-    component: EmployeeProfileComponent,
   },];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

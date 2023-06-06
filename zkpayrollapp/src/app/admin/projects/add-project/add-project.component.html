@@ -48,7 +48,7 @@
                   <mat-form-field class="example-full-width" appearance="outline">
                     <mat-label>Team</mat-label>
                     <mat-select formControlName="team" multiple required>
-                      <mat-option *ngFor="let team of teamList" [value]="team.id">{{team.name}}
+                      <mat-option *ngFor="let team of teamList" [value]="team.id">{{team.firstName + ', ' + team.lastName}}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>

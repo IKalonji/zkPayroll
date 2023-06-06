@@ -16,10 +16,10 @@ export class AddprojectsComponent {
   public Editor = ClassicEditor;
 
   teamList: EmployeeDto[] = [
-    { id: 'id1', name: 'Employee 1', walletAddress: 'address1' },
-    { id: 'id2', name: 'Employee 2', walletAddress: 'address2' },
-    { id: 'id3', name: 'Employee 3', walletAddress: 'address3' },
-    { id: 'id4', name: 'Employee 4', walletAddress: 'address4' }
+    { id: 'id1', firstName: 'Employee 1', lastName: 'Surname 1', walletAddress: 'address1' },
+    { id: 'id2', firstName: 'Employee 2', lastName: 'Surname 2', walletAddress: 'address2' },
+    { id: 'id3', firstName: 'Employee 3', lastName: 'Surname 3', walletAddress: 'address3' },
+    { id: 'id4', firstName: 'Employee 4', lastName: 'Surname 4', walletAddress: 'address4' }
   ];
 
   clientList: ClientDto[] = [

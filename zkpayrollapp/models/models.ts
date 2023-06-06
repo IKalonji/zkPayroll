@@ -8,7 +8,8 @@ export class ClientDto {
 
 export class EmployeeDto {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     walletAddress: string;
 }
 
