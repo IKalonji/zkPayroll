@@ -1,51 +1,50 @@
 import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject } from "rxjs";
 import { map } from "rxjs/operators";
-import { Project, ProjectAdapter } from "./project.model";
-// import { PROJECTS } from "./project.data";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { ProjectAdapter } from "./project.model";
 import { UnsubscribeOnDestroyAdapter } from "src/app/shared/UnsubscribeOnDestroyAdapter";
+import { ProjectDto } from "models/models";
+import { Contract } from "src/services/contract.service";
+import { v4 as uuid } from 'uuid';
 
 @Injectable({
   providedIn: "root",
 })
 export class ProjectService extends UnsubscribeOnDestroyAdapter {
-  private trash: Set<number> = new Set([]); // trashed projects' id; set is better for unique ids
+  private trash: Set<string> = new Set([]); // trashed projects' id; set is better for unique ids
   private _projects: BehaviorSubject<object[]> = new BehaviorSubject([]);
   public readonly projects: Observable<object[]> =
     this._projects.asObservable();
-  private readonly API_URL = "assets/data/projects.json";
 
-  constructor(private adapter: ProjectAdapter, private httpClient: HttpClient) {
+  constructor(private adapter: ProjectAdapter, private contractService: Contract) {
     super();
-    // this._projects.next(PROJECTS); // mock up backend with fake data (not Project objects yet!)
     this.getAllProjectss();
   }
 
   /** CRUD METHODS */
   getAllProjectss(): void {
-    this.subs.sink = this.httpClient.get<Project[]>(this.API_URL).subscribe(
+    this.contractService.getProjects().then(
       (data) => {
-        this._projects.next(data); // mock up backend with fake data (not Project objects yet!)
-      },
-      (error: HttpErrorResponse) => {
+        this._projects.next(data);
+      }).catch(
+      (error) => {
         console.log(error.name + " " + error.message);
       }
     );
   }
 
-  private compareProjectGravity(a: Project, b: Project): number {
+  private compareProjectGravity(a: ProjectDto, b: ProjectDto): number {
     // if at least one of compared project deadlines is not null, compare deadline dates
     // (further date comes first), else compare priority (larger priority comes first)
-    if (a.deadline !== null || b.deadline !== null) {
+    if (a.endDate !== null || b.endDate !== null) {
       // simply compare dates without converting to numbers
-      return -(a.deadline > b.deadline) || +(a.deadline < b.deadline);
+      return -(a.endDate > b.endDate) || +(a.endDate < b.endDate);
     } else {
-      return b.priority - a.priority;
+      return 1;
     }
   }
 
-  public getObjects(): Observable<Project[]> {
+  public getObjects(): Observable<ProjectDto[]> {
     return this.projects.pipe(
       map((data: any[]) =>
         data
@@ -62,7 +61,7 @@ export class ProjectService extends UnsubscribeOnDestroyAdapter {
     );
   }
 
-  public getObjectById(id: number): Observable<Project> {
+  public getObjectById(id: string): Observable<ProjectDto> {
     return this.projects.pipe(
       map(
         (data: any) =>
@@ -80,31 +79,33 @@ export class ProjectService extends UnsubscribeOnDestroyAdapter {
   }
 
   public createOject(project: any): void {
-    project.id = this._projects.getValue().length + 1; // mock Project object with fake id (we have no backend)
-    this._projects.next(this._projects.getValue().concat(project));
+    project.id = uuid();
+    this.contractService.addProject(project).then(() => {
+      console.log(project);
+      this.getAllProjectss();
+    });
   }
 
-  public updateObject(project: Project): void {
-    const projects = this._projects.getValue();
-    const projectIndex = projects.findIndex((t: any) => t.id === project.id);
-    projects[projectIndex] = project;
-    this._projects.next(projects);
+  public updateObject(project: ProjectDto): void {
+    this.contractService.updateProject(project).then(() => {
+      this.getAllProjectss();
+    });
   }
 
-  public deleteObject(project: Project): void {
-    this._projects.next(
-      this._projects.getValue().filter((t: any) => t.id !== project.id)
-    );
+  public deleteObject(project: ProjectDto): void {
+    this.contractService.deleteProject(project).then(() => {
+      this.getAllProjectss();
+    });
   }
 
-  public detachObject(project: Project): void {
+  public detachObject(project: ProjectDto): void {
     // add project id to trash
     this.trash.add(project.id);
     // force emit change for projects observers
     return this._projects.next(this._projects.getValue());
   }
 
-  public attachObject(project: Project): void {
+  public attachObject(project: ProjectDto): void {
     // remove project id from trash
     this.trash.delete(project.id);
     // force emit change for projects observers

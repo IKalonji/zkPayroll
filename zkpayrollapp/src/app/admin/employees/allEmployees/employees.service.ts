@@ -1,21 +1,21 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Employees } from "./employees.model";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { UnsubscribeOnDestroyAdapter } from "src/app/shared/UnsubscribeOnDestroyAdapter";
+import { EmployeeDto } from "models/models";
+import { Contract } from "src/services/contract.service";
 @Injectable()
 export class EmployeesService extends UnsubscribeOnDestroyAdapter {
-  private readonly API_URL = "assets/data/employees.json";
   isTblLoading = true;
-  dataChange: BehaviorSubject<Employees[]> = new BehaviorSubject<Employees[]>(
+  dataChange: BehaviorSubject<EmployeeDto[]> = new BehaviorSubject<EmployeeDto[]>(
     []
   );
   // Temporarily stores data from dialogs
   dialogData: any;
-  constructor(private httpClient: HttpClient) {
+  constructor(private contract: Contract) {
     super();
   }
-  get data(): Employees[] {
+  get data(): EmployeeDto[] {
     return this.dataChange.value;
   }
   getDialogData() {
@@ -23,18 +23,18 @@ export class EmployeesService extends UnsubscribeOnDestroyAdapter {
   }
   /** CRUD METHODS */
   getAllEmployeess(): void {
-    this.subs.sink = this.httpClient.get<Employees[]>(this.API_URL).subscribe(
+    this.contract.getEmployees().then(
       (data) => {
         this.isTblLoading = false;
         this.dataChange.next(data);
-      },
-      (error: HttpErrorResponse) => {
+      }).catch(
+      (error) => {
         this.isTblLoading = false;
         console.log(error.name + " " + error.message);
       }
     );
   }
-  addEmployees(employees: Employees): void {
+  addEmployees(employees: EmployeeDto): void {
     this.dialogData = employees;
 
     /*  this.httpClient.post(this.API_URL, employees).subscribe(data => {
@@ -44,7 +44,7 @@ export class EmployeesService extends UnsubscribeOnDestroyAdapter {
      // error code here
     });*/
   }
-  updateEmployees(employees: Employees): void {
+  updateEmployees(employees: EmployeeDto): void {
     this.dialogData = employees;
 
     /* this.httpClient.put(this.API_URL + employees.id, employees).subscribe(data => {

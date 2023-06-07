@@ -7,8 +7,8 @@ import {
   FormGroup,
   FormBuilder,
 } from "@angular/forms";
-import { Employees } from "../../employees.model";
 import { formatDate } from "@angular/common";
+import { EmployeeDto } from "models/models";
 @Component({
   selector: "app-form-dialog",
   templateUrl: "./form-dialog.component.html",
@@ -18,7 +18,7 @@ export class FormDialogComponent {
   action: string;
   dialogTitle: string;
   employeesForm: FormGroup;
-  employees: Employees;
+  employees: EmployeeDto;
   constructor(
     public dialogRef: MatDialogRef<FormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -32,7 +32,7 @@ export class FormDialogComponent {
       this.employees = data.employees;
     } else {
       this.dialogTitle = "New Employees";
-      this.employees = new Employees({});
+      this.employees = new EmployeeDto();
     }
     this.employeesForm = this.createContactForm();
   }
@@ -50,17 +50,10 @@ export class FormDialogComponent {
   createContactForm(): FormGroup {
     return this.fb.group({
       id: [this.employees.id],
-      img: [this.employees.img],
-      name: [this.employees.name],
-      email: [this.employees.email],
-      date: [
-        formatDate(this.employees.date, "yyyy-MM-dd", "en"),
-        [Validators.required],
-      ],
-      role: [this.employees.role],
-      mobile: [this.employees.mobile],
-      department: [this.employees.department],
-      degree: [this.employees.degree],
+      firstName: [this.employees.firstName],
+      lastName: [this.employees.lastName],
+      walletAddress: [this.employees.walletAddress],
+      confirmWalletAddress: [],
     });
   }
   submit() {

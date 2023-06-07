@@ -2,7 +2,6 @@
   <div class="modalHeader">
     <div class="editRowModal">
       <div class="modalHeader clearfix">
-        <img [src]='clients.img' alt="avatar">
         <div class="modal-about">
           <div class="font-weight-bold p-t-5 ms-2 me-2 font-17">
             {{dialogTitle}}</div>
@@ -29,9 +28,9 @@
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width" appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile" type="number">
+            <input matInput formControlName="number" type="number">
             <mat-icon matSuffix>phone</mat-icon>
-            <mat-error *ngIf="clientForm.get('mobile').hasError('required')">
+            <mat-error *ngIf="clientForm.get('number').hasError('required')">
               Mobile is required
             </mat-error>
           </mat-form-field>

@@ -12,7 +12,7 @@ import { map } from "rxjs/operators";
 import { SelectionModel } from "@angular/cdk/collections";
 import { UnsubscribeOnDestroyAdapter } from "src/app/shared/UnsubscribeOnDestroyAdapter";
 import { ClientsService } from "./clients.service";
-import { Clients } from "./clients.model";
+import { ClientDto } from "models/models";
 @Component({
   selector: "app-all-clients",
   templateUrl: "./all-clients.component.html",
@@ -25,17 +25,15 @@ export class AllclientComponent
   displayedColumns = [
     "select",
     "name",
-    "mobile",
+    "number",
     "email",
-    "company_name",
     "actions",
   ];
-  exampleDatabase: ClientsService | null;
   dataSource: ExampleDataSource | null;
-  selection = new SelectionModel<Clients>(true, []);
+  selection = new SelectionModel<ClientDto>(true, []);
   index: number;
-  id: number;
-  clients: Clients | null;
+  id: any;
+  clients: ClientDto | null;
   isExporterEnabled: boolean = false;
   constructor(
     public httpClient: HttpClient,
@@ -72,7 +70,7 @@ export class AllclientComponent
       if (result === 1) {
         // After dialog is closed we're doing frontend updates
         // For add we're just pushing a new row inside DataService
-        this.exampleDatabase.dataChange.value.unshift(
+        this.clientService.dataChange.value.unshift(
           this.clientService.getDialogData()
         );
         this.refreshTable();
@@ -103,11 +101,11 @@ export class AllclientComponent
     this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
       if (result === 1) {
         // When using an edit things are little different, firstly we find record inside DataService by id
-        const foundIndex = this.exampleDatabase.dataChange.value.findIndex(
+        const foundIndex = this.clientService.dataChange.value.findIndex(
           (x) => x.id === this.id
         );
         // Then you update that record using data from dialogData (values you enetered)
-        this.exampleDatabase.dataChange.value[foundIndex] =
+        this.clientService.dataChange.value[foundIndex] =
           this.clientService.getDialogData();
         // And lastly refresh table
         this.refreshTable();
@@ -137,11 +135,11 @@ export class AllclientComponent
     });
     this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
       if (result === 1) {
-        const foundIndex = this.exampleDatabase.dataChange.value.findIndex(
+        const foundIndex = this.clientService.dataChange.value.findIndex(
           (x) => x.id === this.id
         );
         // for delete we use splice in order to remove single object from DataService
-        this.exampleDatabase.dataChange.value.splice(foundIndex, 1);
+        this.clientService.dataChange.value.splice(foundIndex, 1);
         this.refreshTable();
         this.showNotification(
           "snackbar-danger",
@@ -177,9 +175,9 @@ export class AllclientComponent
         (d) => d === item
       );
       // console.log(this.dataSource.renderedData.findIndex((d) => d === item));
-      this.exampleDatabase.dataChange.value.splice(index, 1);
+      this.clientService.dataChange.value.splice(index, 1);
       this.refreshTable();
-      this.selection = new SelectionModel<Clients>(true, []);
+      this.selection = new SelectionModel<ClientDto>(true, []);
     });
     this.showNotification(
       "snackbar-danger",
@@ -189,9 +187,8 @@ export class AllclientComponent
     );
   }
   public loadData() {
-    this.exampleDatabase = new ClientsService(this.httpClient);
     this.dataSource = new ExampleDataSource(
-      this.exampleDatabase,
+      this.clientService,
       this.paginator,
       this.sort
     );
@@ -213,7 +210,7 @@ export class AllclientComponent
     });
   }
 }
-export class ExampleDataSource extends DataSource<Clients> {
+export class ExampleDataSource extends DataSource<ClientDto> {
   filterChange = new BehaviorSubject("");
   get filter(): string {
     return this.filterChange.value;
@@ -221,10 +218,10 @@ export class ExampleDataSource extends DataSource<Clients> {
   set filter(filter: string) {
     this.filterChange.next(filter);
   }
-  filteredData: Clients[] = [];
-  renderedData: Clients[] = [];
+  filteredData: ClientDto[] = [];
+  renderedData: ClientDto[] = [];
   constructor(
-    public exampleDatabase: ClientsService,
+    public clientService: ClientsService,
     public paginator: MatPaginator,
     public _sort: MatSort
   ) {
@@ -233,28 +230,30 @@ export class ExampleDataSource extends DataSource<Clients> {
     this.filterChange.subscribe(() => (this.paginator.pageIndex = 0));
   }
   /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<Clients[]> {
+  connect(): Observable<ClientDto[]> {
     // Listen for any changes in the base data, sorting, filtering, or pagination
     const displayDataChanges = [
-      this.exampleDatabase.dataChange,
+      this.clientService.dataChange,
       this._sort.sortChange,
       this.filterChange,
       this.paginator.page,
     ];
-    this.exampleDatabase.getAllClients();
+    this.clientService.getAllClients();
     return merge(...displayDataChanges).pipe(
+      /*id: string;
+    name: string;
+    email: string;
+    number: string;
+    date: Date;*/
       map(() => {
         // Filter data
-        this.filteredData = this.exampleDatabase.data
+        this.filteredData = this.clientService.data
           .slice()
-          .filter((clients: Clients) => {
+          .filter((clients: ClientDto) => {
             const searchStr = (
               clients.name +
-              clients.mobile +
-              clients.email +
-              clients.company_name +
-              clients.currency +
-              clients.billing_method
+              clients.number +
+              clients.email
             ).toLowerCase();
             return searchStr.indexOf(this.filter.toLowerCase()) !== -1;
           });
@@ -272,7 +271,7 @@ export class ExampleDataSource extends DataSource<Clients> {
   }
   disconnect() {}
   /** Returns a sorted copy of the database data. */
-  sortData(data: Clients[]): Clients[] {
+  sortData(data: ClientDto[]): ClientDto[] {
     if (!this._sort.active || this._sort.direction === "") {
       return data;
     }
@@ -289,14 +288,8 @@ export class ExampleDataSource extends DataSource<Clients> {
         case "email":
           [propertyA, propertyB] = [a.email, b.email];
           break;
-        case "company_name":
-          [propertyA, propertyB] = [a.company_name, b.company_name];
-          break;
-        case "currency":
-          [propertyA, propertyB] = [a.currency, b.currency];
-          break;
-        case "mobile":
-          [propertyA, propertyB] = [a.mobile, b.mobile];
+        case "number":
+          [propertyA, propertyB] = [a.number, b.name];
           break;
       }
       const valueA = isNaN(+propertyA) ? propertyA : +propertyA;

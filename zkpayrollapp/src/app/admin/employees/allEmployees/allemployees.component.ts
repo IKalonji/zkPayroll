@@ -4,7 +4,6 @@ import { HttpClient } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
-import { Employees } from "./employees.model";
 import { DataSource } from "@angular/cdk/collections";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatMenuTrigger } from "@angular/material/menu";
@@ -14,6 +13,7 @@ import { FormDialogComponent } from "./dialogs/form-dialog/form-dialog.component
 import { DeleteDialogComponent } from "./dialogs/delete/delete.component";
 import { SelectionModel } from "@angular/cdk/collections";
 import { UnsubscribeOnDestroyAdapter } from "src/app/shared/UnsubscribeOnDestroyAdapter";
+import { EmployeeDto } from "models/models";
 @Component({
   selector: "app-allemployees",
   templateUrl: "./allemployees.component.html",
@@ -25,22 +25,16 @@ export class AllemployeesComponent
 {
   displayedColumns = [
     "select",
-    "img",
-    "name",
-    "department",
-    "role",
-    "degree",
-    "mobile",
-    "email",
-    "date",
+    "firstName",
+    "lastName",
+    "walletAddress",
     "actions",
   ];
-  exampleDatabase: EmployeesService | null;
   dataSource: ExampleDataSource | null;
-  selection = new SelectionModel<Employees>(true, []);
+  selection = new SelectionModel<EmployeeDto>(true, []);
   index: number;
-  id: number;
-  employees: Employees | null;
+  id: any;
+  employees: EmployeeDto | null;
   constructor(
     public httpClient: HttpClient,
     public dialog: MatDialog,
@@ -79,7 +73,7 @@ export class AllemployeesComponent
       if (result === 1) {
         // After dialog is closed we're doing frontend updates
         // For add we're just pushing a new row inside DataServicex
-        this.exampleDatabase.dataChange.value.unshift(
+        this.employeesService.dataChange.value.unshift(
           this.employeesService.getDialogData()
         );
         this.refreshTable();
@@ -110,11 +104,11 @@ export class AllemployeesComponent
     this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
       if (result === 1) {
         // When using an edit things are little different, firstly we find record inside DataService by id
-        const foundIndex = this.exampleDatabase.dataChange.value.findIndex(
+        const foundIndex = this.employeesService.dataChange.value.findIndex(
           (x) => x.id === this.id
         );
         // Then you update that record using data from dialogData (values you enetered)
-        this.exampleDatabase.dataChange.value[foundIndex] =
+        this.employeesService.dataChange.value[foundIndex] =
           this.employeesService.getDialogData();
         // And lastly refresh table
         this.refreshTable();
@@ -144,11 +138,11 @@ export class AllemployeesComponent
     });
     this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
       if (result === 1) {
-        const foundIndex = this.exampleDatabase.dataChange.value.findIndex(
+        const foundIndex = this.employeesService.dataChange.value.findIndex(
           (x) => x.id === this.id
         );
         // for delete we use splice in order to remove single object from DataService
-        this.exampleDatabase.dataChange.value.splice(foundIndex, 1);
+        this.employeesService.dataChange.value.splice(foundIndex, 1);
         this.refreshTable();
         this.showNotification(
           "snackbar-danger",
@@ -184,10 +178,10 @@ export class AllemployeesComponent
         (d) => d === item
       );
       // console.log(this.dataSource.renderedData.findIndex((d) => d === item));
-      this.exampleDatabase.dataChange.value.splice(index, 1);
+      this.employeesService.dataChange.value.splice(index, 1);
 
       this.refreshTable();
-      this.selection = new SelectionModel<Employees>(true, []);
+      this.selection = new SelectionModel<EmployeeDto>(true, []);
     });
     this.showNotification(
       "snackbar-danger",
@@ -197,9 +191,8 @@ export class AllemployeesComponent
     );
   }
   public loadData() {
-    this.exampleDatabase = new EmployeesService(this.httpClient);
     this.dataSource = new ExampleDataSource(
-      this.exampleDatabase,
+      this.employeesService,
       this.paginator,
       this.sort
     );
@@ -221,7 +214,7 @@ export class AllemployeesComponent
     });
   }
   // context menu
-  onContextMenu(event: MouseEvent, item: Employees) {
+  onContextMenu(event: MouseEvent, item: EmployeeDto) {
     event.preventDefault();
     this.contextMenuPosition.x = event.clientX + "px";
     this.contextMenuPosition.y = event.clientY + "px";
@@ -230,7 +223,7 @@ export class AllemployeesComponent
     this.contextMenu.openMenu();
   }
 }
-export class ExampleDataSource extends DataSource<Employees> {
+export class ExampleDataSource extends DataSource<EmployeeDto> {
   filterChange = new BehaviorSubject("");
   get filter(): string {
     return this.filterChange.value;
@@ -238,8 +231,8 @@ export class ExampleDataSource extends DataSource<Employees> {
   set filter(filter: string) {
     this.filterChange.next(filter);
   }
-  filteredData: Employees[] = [];
-  renderedData: Employees[] = [];
+  filteredData: EmployeeDto[] = [];
+  renderedData: EmployeeDto[] = [];
   constructor(
     public exampleDatabase: EmployeesService,
     public paginator: MatPaginator,
@@ -250,7 +243,7 @@ export class ExampleDataSource extends DataSource<Employees> {
     this.filterChange.subscribe(() => (this.paginator.pageIndex = 0));
   }
   /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<Employees[]> {
+  connect(): Observable<EmployeeDto[]> {
     // Listen for any changes in the base data, sorting, filtering, or pagination
     const displayDataChanges = [
       this.exampleDatabase.dataChange,
@@ -264,14 +257,10 @@ export class ExampleDataSource extends DataSource<Employees> {
         // Filter data
         this.filteredData = this.exampleDatabase.data
           .slice()
-          .filter((employees: Employees) => {
+          .filter((employees: EmployeeDto) => {
             const searchStr = (
-              employees.name +
-              employees.department +
-              employees.role +
-              employees.degree +
-              employees.email +
-              employees.mobile
+              employees.firstName +
+              employees.lastName
             ).toLowerCase();
             return searchStr.indexOf(this.filter.toLowerCase()) !== -1;
           });
@@ -289,7 +278,7 @@ export class ExampleDataSource extends DataSource<Employees> {
   }
   disconnect() {}
   /** Returns a sorted copy of the database data. */
-  sortData(data: Employees[]): Employees[] {
+  sortData(data: EmployeeDto[]): EmployeeDto[] {
     if (!this._sort.active || this._sort.direction === "") {
       return data;
     }
@@ -300,20 +289,11 @@ export class ExampleDataSource extends DataSource<Employees> {
         case "id":
           [propertyA, propertyB] = [a.id, b.id];
           break;
-        case "name":
-          [propertyA, propertyB] = [a.name, b.name];
+        case "firstName":
+          [propertyA, propertyB] = [a.firstName, b.firstName];
           break;
-        case "email":
-          [propertyA, propertyB] = [a.email, b.email];
-          break;
-        case "date":
-          [propertyA, propertyB] = [a.date, b.date];
-          break;
-        case "time":
-          [propertyA, propertyB] = [a.department, b.department];
-          break;
-        case "mobile":
-          [propertyA, propertyB] = [a.mobile, b.mobile];
+        case "lastName":
+          [propertyA, propertyB] = [a.lastName, b.lastName];
           break;
       }
       const valueA = isNaN(+propertyA) ? propertyA : +propertyA;

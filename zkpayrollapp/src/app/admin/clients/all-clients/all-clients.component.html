@@ -95,20 +95,16 @@
                   <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="name">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Company Name</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.name}}</mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="mobile">
+                <ng-container matColumnDef="number">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.mobile}}</mat-cell>
+                  <mat-cell *matCellDef="let row"> {{row.number}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="email">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.email}}</mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="company_name">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Company Name</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.company_name}}</mat-cell>
                 </ng-container>
                 <!-- actions -->
                 <ng-container matColumnDef="actions">
@@ -131,11 +127,11 @@
                 </mat-row>
               </mat-table>
               <!-- Loading spinner -->
-              <div *ngIf="exampleDatabase.isTblLoading" class="tbl-spinner">
+              <div *ngIf="clientService.isTblLoading" class="tbl-spinner">
                 <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
                 </mat-progress-spinner>
               </div>
-              <div *ngIf="!exampleDatabase.isTblLoading" class="no-results"
+              <div *ngIf="!clientService.isTblLoading" class="no-results"
                 [style.display]="dataSource.renderedData.length == 0 ? '' : 'none'">
                 No results
               </div>

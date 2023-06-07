@@ -8,7 +8,8 @@ import {
 } from "@angular/forms";
 import { formatDate } from "@angular/common";
 import { ClientsService } from "../../clients.service";
-import { Clients } from "../../clients.model";
+import { ClientDto } from "models/models";
+import { v4 as uuid } from 'uuid';
 @Component({
   selector: "app-form-dialog",
   templateUrl: "./form-dialog.component.html",
@@ -18,7 +19,7 @@ export class FormDialogComponent {
   action: string;
   dialogTitle: string;
   clientForm: FormGroup;
-  clients: Clients;
+  clients: ClientDto;
   constructor(
     public dialogRef: MatDialogRef<FormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -32,7 +33,8 @@ export class FormDialogComponent {
       this.clients = data.clients;
     } else {
       this.dialogTitle = "New Client";
-      this.clients = new Clients({});
+      this.clients = new ClientDto();
+      this.clients.id = uuid();
     }
     this.clientForm = this.createContactForm();
   }
@@ -50,13 +52,9 @@ export class FormDialogComponent {
   createContactForm(): FormGroup {
     return this.fb.group({
       id: [this.clients.id],
-      img: [this.clients.img],
       name: [this.clients.name],
       email: [this.clients.email],
-      mobile: [this.clients.mobile],
-      company_name: [this.clients.company_name],
-      currency: [this.clients.currency],
-      billing_method: [this.clients.billing_method],
+      number: [this.clients.number],
     });
   }
   submit() {

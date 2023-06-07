@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Adapter } from "./adapters";
+import { ProjectDto } from "models/models";
 
 export enum ProjectStatus {
   NEWPROJECTS = 0,
@@ -41,23 +42,9 @@ export class Project {
 @Injectable({
   providedIn: "root",
 })
-export class ProjectAdapter implements Adapter<Project> {
-  adapt(item: any): Project {
-    const adapted = new Project(
-      Number(item.id),
-      item.name,
-      item.status ? Number(item.status) : undefined,
-      item.description,
-      item.deadline ? new Date(item.deadline) : undefined,
-      item.priority ? Number(item.priority) : undefined,
-      item.open_task,
-      item.type,
-      item.created ? new Date(item.created) : undefined,
-      item.team_leader,
-      item.comments ? Number(item.comments) : undefined,
-      item.bugs ? Number(item.bugs) : undefined,
-      item.progress ? Number(item.progress) : undefined
-    );
+export class ProjectAdapter implements Adapter<ProjectDto> {
+  adapt(item: any): ProjectDto {
+    const adapted = new ProjectDto();
     return adapted;
   }
 }

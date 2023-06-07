@@ -4,63 +4,56 @@ import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-import {
-  Project,
-  ProjectStatus,
-  ProjectPriority,
-  ProjectType,
-} from "../core/project.model";
 import { ProjectService } from "../core/project.service";
+import { ClientDto, ProjectDto, ProjectStatus } from "models/models";
+import { Contract } from "src/services/contract.service";
 
 @Component({
   selector: "app-project-dialog",
   templateUrl: "./project-dialog.component.html",
 })
 export class ProjectDialogComponent implements OnInit {
-  public project: Project;
+  public project: ProjectDto;
   public dialogTitle: string;
   public projectForm: FormGroup;
-  public statusChoices: typeof ProjectStatus;
-  public priorityChoices: typeof ProjectPriority;
-  public projectType: typeof ProjectType;
+  statusChoices: typeof ProjectStatus;
+  clientList: ClientDto[];
 
   constructor(
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ProjectDialogComponent>,
     private snackBar: MatSnackBar,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private contractService: Contract
   ) {
     this.dialogTitle = data.title;
     this.project = data.project;
     this.statusChoices = ProjectStatus;
-    this.priorityChoices = ProjectPriority;
-    this.projectType = ProjectType;
 
     const nonWhiteSpaceRegExp: RegExp = new RegExp("\\S");
 
     this.projectForm = this.formBuilder.group({
-      name: [
-        this.project?.name,
+      clientId: [this.project?.clientId, [Validators.required]],
+      title: [
+        this.project?.title,
         [Validators.required, Validators.pattern(nonWhiteSpaceRegExp)],
       ],
       status: [
-        this.project ? this.project.status : this.statusChoices.NEWPROJECTS,
+        this.project ? this.project.status : this.statusChoices.Pending,
       ],
       description: [this.project?.description],
-      deadline: [this.project?.deadline],
-      priority: [
-        this.project ? this.project.priority : this.priorityChoices.MEDIUM,
-      ],
-      open_task: [this.project?.open_task],
-      type: [this.project ? this.project.type : this.projectType.WEB],
-      created: [this.project?.created],
-      team_leader: [this.project?.team_leader],
-      progress: [this.project?.progress],
+      rate: [this.project?.rate, [Validators.required]],
+      startDate: [this.project?.startDate, []],
+      endDate: [this.project?.endDate, []]
     });
   }
 
-  public ngOnInit(): void {}
+  public ngOnInit(): void {
+    this.contractService.getClients().then(data => {
+      this.clientList = data;
+    })
+  }
 
   public save(): void {
     console.log("save");
