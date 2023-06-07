@@ -28,12 +28,12 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { CKEditorModule } from "@ckeditor/ckeditor5-angular";
 
 import { ProjectsRoutingModule } from "./projects-routing.module";
-import { AddprojectsComponent } from "./add-project/add-project.component";
+import { AssignProjectComponent } from "./assign-project/assign-project.component";
 import { ComponentsModule } from "src/app/shared/components/components.module";
 
 @NgModule({
   declarations: [
-    AddprojectsComponent,
+    AssignProjectComponent,
     AllprojectsComponent,
     BoardComponent,
     ProjectDialogComponent,

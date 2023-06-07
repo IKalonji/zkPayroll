@@ -94,8 +94,8 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: "/admin/projects/addProject",
-        title: "MENUITEMS.PROJECTS.LIST.ADD-PROJECT",
+        path: "/admin/projects/assignProject",
+        title: "Assign Project",
         moduleName: "projects",
         iconType: "",
         icon: "",
