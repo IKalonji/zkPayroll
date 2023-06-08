@@ -5,58 +5,104 @@ pragma solidity >=0.7.0 <0.9.0;
 contract ZKPayroll {
 
     address ADMIN;
+    /*
+    export class ClientDto {
+
+};
+
+export class EmployeeDto {
+
+};
+
+export enum ProjectStatus {
+    Completed,
+    InProgress,
+    Pending
+};
+
+export class ProjectDto {
+
+};
+
+export class AssignmentDto {
+
+};
+
+export class TimesheetDto {
+
+};
+
+export class InvoiceDto {
+
+}
+
+export class PaymentDto {
+
+};
+
+    */
+    enum ProjectStatus { Completed, InProgress, Pending} 
 
     struct Client {
-        string UUID;
-        string name;
-        Project project;
+    string id;
+    string name;
+    string email;
+    string number;
+    string  date;
     }
 
     struct Assignment {
-        string UUID;
-        uint clientID;
-        uint employeeID;
-        uint assignmentID;
-        uint assignmentDate;
+    string id;
+    string employeeId;
+    string projectId;
+    string date;
     }
 
     struct Employee {
-        string UUID;
-        string name;
-        bool created;
+    string id;
+    string firstName;
+    string lastName;
+    address walletAddress;
     }
 
     struct Timesheet {
-        string UUID;
-        Client client;
-        uint hoursWorked;
+    string id;
+    string employeeId;
+    string projectId;
+    uint _hours;
+    bool isInvoiced;
     }
 
     struct Project {
-        string UUID;
-        string name;
-        string description;
-        uint startDate;
-        uint endDate;
+    string id;
+    string clientId;
+    string title;
+    string description;
+    uint rate;
+    string startDate;
+    string endDate;
+    ProjectStatus status;
     }
 
     struct Invoice {
-        string UUID;
-        uint hoursWorked;
-        uint rate;
-        string status;
+    string id;
+    string employeeId;
+    string description;
+    string[] timesheetIds;
+    bool isPaid;
     }
 
     struct Payment {
-        string UUID;
-        uint invoiceID;
+        string id;
+        string invoiceId;
         uint amount;
     }
 
     mapping (address => Employee) employeeMapping;
     mapping (address => Client) clientMapping;
     mapping (address => Invoice) clientInvoiceMapping;
-    mapping (address => Timesheet[]) employeeTimesheet;
+    Project[] projects;
+    Timesheet[] timesheets;
 
     event EmployeeCreated(address Employee);
     event ClientCreated(address Client);
@@ -75,69 +121,82 @@ contract ZKPayroll {
     }
 
     function addEmployee(
-        string memory _UUID,
-        string memory _name,
-        address _employeeWallet
+    string memory _id,
+    string memory _firstName,
+    string memory _lastName,
+    address walletAddress
     ) external OnlyAdmin() {
-        employeeMapping[_employeeWallet] = Employee(_UUID, _name, true);
-        emit EmployeeCreated(_employeeWallet);
+        employeeMapping[walletAddress] = Employee(_id, _firstName, _lastName, walletAddress);
+        emit EmployeeCreated(walletAddress);
     }
 
     function addClient(
-        string memory _UUID,
-        string memory _name,
+    string memory _id,
+    string memory _name,
+    string memory _email,
+    string memory _number,
+    string memory _date,
         address _clientWallet
     ) external OnlyAdmin() {
         Client memory _client;
-        _client.UUID = _UUID;
+        _client.id = _id;
         _client.name = _name;
+        _client.email = _email;
+        _client.number = _number;
+        _client.date = _date;
         clientMapping[_clientWallet] = _client;
         emit ClientCreated(_clientWallet);
     }
 
     function addClientProject(
-        string memory _UUID,
-        string memory _name,
-        string memory _description,
-        uint _startDate,
-        uint _endDate,
-        address _clientAddress
+    string memory id,
+    string memory clientId,
+    string memory title,
+    string memory description,
+    uint rate,
+    string memory startDate,
+    string memory endDate,
+    address _clientAddress
     ) external OnlyAdmin() {
         Project memory _project;
-        _project.UUID = _UUID;
-        _project.name = _name;
-        _project.description = _description;
-        _project.startDate = _startDate;
-        _project.endDate = _endDate;
-        clientMapping[_clientAddress].project = _project;
-        emit ProjectCreated(_clientAddress, _name);
+        _project.id = id;
+        _project.clientId = clientId;
+        _project.title = title;
+        _project.description = description;
+        _project.rate = rate;
+        _project.startDate = startDate;
+        _project.endDate = endDate;
+        _project.status = ProjectStatus.InProgress;
+        projects.push(_project);
+        emit ProjectCreated(_clientAddress, title);
     }
 
     function addClientInvoice(
-        string memory _UUID,
-        uint hoursWorked,
-        uint rate,
-        string memory status,
-        address _clientAddress
+    string memory id,
+    string memory employeeId,
+    string memory description,
+    string[] memory timesheetIds,
+    address clientAddress
     ) external OnlyAdmin() {
         Invoice memory _invoice;
-        _invoice.UUID = _UUID;
-        _invoice.hoursWorked = hoursWorked;
-        _invoice.rate = rate;
-        _invoice.status = status;
-        clientInvoiceMapping[_clientAddress] = _invoice;
-        emit InvoiceCreated(_clientAddress);
+        _invoice.id = id;
+        _invoice.employeeId = employeeId;
+        _invoice.description = description;
+        _invoice.timesheetIds = timesheetIds;
+        _invoice.isPaid = false;
+        clientInvoiceMapping[clientAddress] = _invoice;
+        emit InvoiceCreated(clientAddress);
     }
 
     function employeeTimesheetCapture(
-        string memory _UUID,
-        address _clientAddress,
-        uint _hoursWorked
+    string memory id,
+    string memory employeeId,
+    string memory projectId,
+    uint _hours
     ) external {
-        require(employeeMapping[msg.sender].created != false, "Not an employee");
-        Client storage _client = clientMapping[_clientAddress];
-        Timesheet memory _timesheet = Timesheet(_UUID, _client, _hoursWorked);
-        employeeTimesheet[msg.sender].push(_timesheet);
+        require(employeeMapping[msg.sender].walletAddress != address(0), "Not an employee");
+        Timesheet memory _timesheet = Timesheet(id, employeeId, projectId, _hours, false);
+        timesheets.push(_timesheet);
         emit TimesheetCreated(msg.sender);
     }
 
